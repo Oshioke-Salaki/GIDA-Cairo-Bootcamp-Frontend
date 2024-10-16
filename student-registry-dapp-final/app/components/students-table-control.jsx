@@ -38,8 +38,6 @@ export default function StudentsTableControl({ count, handleRefreshStudents }) {
 
   // Contract Call Array
   const calls = useMemo(() => {
-    console.log(firstName, surname, phoneNumber, age);
-
     // Validate the input values before proceeding
     const isInputValid =
       userAddress &&

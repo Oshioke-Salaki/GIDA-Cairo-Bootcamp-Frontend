@@ -7,7 +7,7 @@ export default function AddressBar({ address }) {
   const { disconnect } = useDisconnect();
   return (
     <div className="relative">
-      <button
+      <div
         role="combobox"
         aria-expanded={showDisconnect}
         aria-controls="disconnect-box"
@@ -23,7 +23,7 @@ export default function AddressBar({ address }) {
         >
           <ChevronDown />
         </span>
-      </button>
+      </div>
       <div
         id="disconnect-box"
         role="listbox"

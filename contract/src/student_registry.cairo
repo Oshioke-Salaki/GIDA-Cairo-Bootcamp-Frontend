@@ -61,8 +61,10 @@ pub mod StudentRegistry {
             _age: u8,
             _is_active: bool
         ) -> bool {
+            let id: u64 = self.total_no_of_students.read() + 1;
             assert(_age > 0, 'age cannot be 0');
             let student = Student {
+                id,
                 fname: _fname,
                 lname: _lname,
                 phone_number: _phone_number,
@@ -71,7 +73,7 @@ pub mod StudentRegistry {
             };
 
             // add new student to storage
-            self.students_map.entry(self.total_no_of_students.read() + 1).write(student);
+            self.students_map.entry(id).write(student);
 
             // increase student's count
             self.total_no_of_students.write(self.total_no_of_students.read() + 1);
@@ -120,6 +122,7 @@ pub mod StudentRegistry {
             // validation to check if student exist
             assert(old_student.age > 0, Errors::STUDENT_NOT_REGISTERED);
             let new_student = Student {
+                id: _index,
                 fname: _fname,
                 lname: _lname,
                 phone_number: _phone_number,
@@ -136,14 +139,19 @@ pub mod StudentRegistry {
         // It does not remove the student account from the mapping, and therefore it does not reduce
         // the total number of students created
         fn delete_student(ref self: ContractState, _index: u64) -> bool {
-            let student: Student = self.students_map.entry(_index).read();
+            let old_student: Student = self.students_map.entry(_index).read();
             // validation to check if student exist
-            assert(student.age > 0, Errors::STUDENT_NOT_REGISTERED);
-            let deleted_student = Student {
-                lname: 0, fname: 0, phone_number: 0, age: 0, is_active: false
+            assert(old_student.age > 0, Errors::STUDENT_NOT_REGISTERED);
+            let new_student = Student {
+                id: old_student.id,
+                fname: old_student.fname,
+                lname: old_student.lname,
+                phone_number: old_student.phone_number,
+                age: old_student.age,
+                is_active: false,
             };
             // update student info
-            self.students_map.entry(_index).write(deleted_student);
+            self.students_map.entry(_index).write(new_student);
 
             true
         }
@@ -171,4 +179,3 @@ pub mod StudentRegistry {
         }
     }
 }
-

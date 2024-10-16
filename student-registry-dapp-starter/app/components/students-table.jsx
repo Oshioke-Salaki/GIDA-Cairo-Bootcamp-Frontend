@@ -14,7 +14,7 @@ export default function StudentsTable({ students }) {
   if (!students?.length) return null;
 
   return (
-    <div className="my-5 text-base leading-6">
+    <div className="my-5 text-base leading-6 text-left">
       <StudentTableHeader />
       <div>
         {students?.slice(from, to).map((student, id) => (

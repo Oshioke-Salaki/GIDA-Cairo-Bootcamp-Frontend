@@ -1,5 +1,6 @@
 #[derive(Drop, Serde, starknet::Store)]
 pub struct Student {
+    pub id: u64,
     pub fname: felt252,
     pub lname: felt252,
     pub phone_number: felt252,

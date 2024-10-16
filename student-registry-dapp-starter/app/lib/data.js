@@ -1,5 +1,5 @@
 export const contractAddress =
-  "0x03efd6a3549a0ea66468ba7f87d177bf2f18cb19ae7bba907f14f5897b9d9ed2";
+  "0x69b7bd97bdd93cde1a9fd72c5a8bc64968221253ee54977c013bf3fb412be69";
 
 export const dummyStudents = [
   {

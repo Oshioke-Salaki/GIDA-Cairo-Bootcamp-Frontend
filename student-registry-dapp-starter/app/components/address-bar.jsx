@@ -1,10 +1,13 @@
 import CopyButton from "./copy-button";
 import ChevronDown from "../svg/ChevronDown";
 import { useState } from "react";
+import { shortenAddress } from "../lib/helpers";
+import { useDisconnect } from "@starknet-react/core";
 export default function AddressBar({ address }) {
   const [showDisconnect, setShowDisconnect] = useState(false);
 
   // TODO: Implement Disconnect Functionality
+  const { disconnect } = useDisconnect({});
 
   return (
     <div className="relative">
@@ -15,7 +18,7 @@ export default function AddressBar({ address }) {
         className="text-sm bg-[#F6F6F6] text-[#6F6F6F] flex gap-x-2 items-center py-[10px] rounded-full px-6"
         onClick={() => setShowDisconnect((prev) => !prev)}
       >
-        {address.slice(0, 6)}...{address.slice(-4)}{" "}
+        {shortenAddress(address)}
         <CopyButton copyText={address || ""} />
         <span
           className={`${
@@ -38,6 +41,7 @@ export default function AddressBar({ address }) {
           <button
             className="flex w-full cursor-pointer items-center justify-center rounded-xl px-4 py-3 text-center text-white bg-[#5B9EF7]  hover:bg-opacity-80 transition-all duration-200 ease-in border-[2px] border-solid border-[#F6F6F6]"
             onClick={() => {
+              disconnect();
               setShowDisconnect(false);
             }}
           >

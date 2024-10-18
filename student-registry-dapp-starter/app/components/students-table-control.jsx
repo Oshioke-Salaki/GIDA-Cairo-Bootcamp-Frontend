@@ -1,9 +1,20 @@
 import RefreshIcon from "../svg/RefreshIcon";
 import Pagination from "./pagination";
 import CloseIcon from "../svg/CloseIcon";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import {
+  useAccount,
+  useContract,
+  useContractWrite,
+  useWaitForTransaction,
+} from "@starknet-react/core";
+import { ABI } from "../abis/abi";
+import { contractAddress } from "../lib/data";
+import { CallData } from "starknet";
+import { HashLoader } from "react-spinners";
 
 export default function StudentsTableControl({ count, handleRefreshStudents }) {
+  const { address: user } = useAccount();
   // Form State Values
   const addStudentPopover = useRef(null);
   const [surname, setSurname] = useState("");
@@ -14,38 +25,72 @@ export default function StudentsTableControl({ count, handleRefreshStudents }) {
   // Submit Event Handler
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    writeAsync();
   };
 
   //TODO: Contract Initialization
+  const { contract } = useContract({
+    abi: ABI,
+    address: contractAddress,
+  });
 
   //TODO: Contract Call Array
+  const calls = useMemo(() => {
+    const isInputValid =
+      user &&
+      contract &&
+      firstName.length > 0 &&
+      surname.length > 0 &&
+      phoneNumber.length > 0 &&
+      age;
+
+    if (!isInputValid) return [];
+
+    return contract.populateTransaction["add_student"](
+      CallData.compile([firstName, surname, phoneNumber, age, 1])
+    );
+  }, [contract, user, firstName, surname, phoneNumber, age]);
+
+  const {
+    writeAsync,
+    data: writeData,
+    isPending: writeIsPending,
+  } = useContractWrite({
+    calls,
+  });
+
+  const { isLoading: waitIsLoading, data: waitData } = useWaitForTransaction({
+    hash: writeData?.transaction_hash,
+    watch: true,
+  });
 
   // Loading State
-  // const LoadingState = ({ message }) => (
-  //   <div className="flex items-center space-x-2">
-  //     <HashLoader size={16} color="#ffffff" />
-  //     <span>{message}</span>
-  //   </div>
-  // );
-  // const buttonContent = () => {
-  //   if (writeIsPending) {
-  //     return <LoadingState message="Sending" />;
-  //   }
+  const LoadingState = ({ message }) => (
+    <div className="flex items-center space-x-2">
+      <HashLoader size={16} color="#ffffff" />
+      <span>{message}</span>
+    </div>
+  );
+  const buttonContent = () => {
+    if (writeIsPending) {
+      return <LoadingState message="Sending" />;
+    }
 
-  //   if (waitIsLoading) {
-  //     return <LoadingState message="Waiting for confirmation" />;
-  //   }
+    if (waitIsLoading) {
+      return <LoadingState message="Waiting for confirmation" />;
+    }
 
-  //   if (waitData && waitData.status === "REJECTED") {
-  //     return <LoadingState message="Transaction rejected" />;
-  //   }
+    if (waitData && waitData.status === "REJECTED") {
+      return <LoadingState message="Transaction rejected" />;
+    }
 
-  //   if (waitData) {
-  //     return "Transaction confirmed";
-  //   }
+    if (waitData) {
+      return "Transaction confirmed";
+    }
 
-  //   return "Add Student";
-  // };
+    return "Add Student";
+  };
 
   return (
     <>
@@ -139,8 +184,7 @@ export default function StudentsTableControl({ count, handleRefreshStudents }) {
             disabled={!surname || !firstName || !age || !phoneNumber}
             onClick={handleSubmit}
           >
-            {/* {buttonContent()} */}
-            Add Student
+            {buttonContent()}
           </button>
         </form>
       </dialog>

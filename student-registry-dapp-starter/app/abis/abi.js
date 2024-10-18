@@ -3,7 +3,7 @@ export const ABI = [
   {
     type: "impl",
     name: "StudentRegistryImpl",
-    interface_name: "cairo_bootcamp_3::student_registry::IStudentRegistry",
+    interface_name: "contracts::student_registry::IStudentRegistry",
   },
   {
     type: "enum",
@@ -21,8 +21,12 @@ export const ABI = [
   },
   {
     type: "struct",
-    name: "cairo_bootcamp_3::student_struct::Student",
+    name: "contracts::student_struct::Student",
     members: [
+      {
+        name: "id",
+        type: "core::integer::u64",
+      },
       {
         name: "fname",
         type: "core::felt252",
@@ -47,17 +51,17 @@ export const ABI = [
   },
   {
     type: "struct",
-    name: "core::array::Span::<cairo_bootcamp_3::student_struct::Student>",
+    name: "core::array::Span::<contracts::student_struct::Student>",
     members: [
       {
         name: "snapshot",
-        type: "@core::array::Array::<cairo_bootcamp_3::student_struct::Student>",
+        type: "@core::array::Array::<contracts::student_struct::Student>",
       },
     ],
   },
   {
     type: "interface",
-    name: "cairo_bootcamp_3::student_registry::IStudentRegistry",
+    name: "contracts::student_registry::IStudentRegistry",
     items: [
       {
         type: "function",
@@ -113,7 +117,7 @@ export const ABI = [
         inputs: [],
         outputs: [
           {
-            type: "core::array::Span::<cairo_bootcamp_3::student_struct::Student>",
+            type: "core::array::Span::<contracts::student_struct::Student>",
           },
         ],
         state_mutability: "view",
@@ -180,7 +184,7 @@ export const ABI = [
   },
   {
     type: "event",
-    name: "cairo_bootcamp_3::student_registry::StudentRegistry::Event",
+    name: "contracts::student_registry::StudentRegistry::Event",
     kind: "enum",
     variants: [],
   },
